@@ -1,0 +1,26 @@
+body {
+    margin: 0;
+}
+
+#left {
+    float: left;
+}
+
+#right {
+    float: right; 
+}
+#left, #right {
+    background-color: brown;
+    height: 100%;
+    width: 25%;
+    top: 0;
+}
+.player-container {
+    height: 25%;
+}
+
+h1 {
+    margin: auto;    
+    text-align: center;
+    background-color: brown;
+}
