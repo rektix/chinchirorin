@@ -19,11 +19,22 @@ def abort_game():
 def choose_dealer():
     socketio.emit('chooseDealer',manager.players[manager.current_player])
 
+@socketio.on('updateBet')
+def updateBet(bet,i,methods=['GET', 'POST']):
+    new_bet = min(manager.players[i]['money'], int(bet))
+    manager.players[i]['bet'] = new_bet
+    manager.players[i]['money'] -= new_bet
+    manager.has_bet += 1
+    socketio.emit('updateTable',[manager.players[i], i])
+    if manager.has_bet == len(manager.players)-1:
+        manager.state = 'roll'
+        socketio.emit('pressRoll')
+
 @socketio.on('dealerChosen')
 def dealer_chosen(dealer):
+    print('dealer is ',dealer)
     manager.dealer = dealer
-    manager.state = 'roll'
-    socketio.emit('pressRoll')
+    socketio.emit('showBet', [manager.players, manager.dealer])
 
 @socketio.on('nextPlayer')
 def ask_next_player():
@@ -46,8 +57,9 @@ def player_join(player, methods=['GET', 'POST']):
 @socketio.on('leave')
 def player_leave(player, methods=['GET','POST']):
     print('disconnected %s'%player)
-    if player in manager.players:
-        manager.players.remove(player)
+    for i in manager.players:
+        if player['user_name'] == i['user_name']:
+            manager.players.remove(i)
     show_players()
     print(manager.players)
     if len(manager.players) < 2: 

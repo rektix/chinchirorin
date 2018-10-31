@@ -7,6 +7,7 @@ class GameManager:
         self.state = ''
         self.current_player = 0
         self.dealer = ''
+        self.has_bet = 0
 
     def start_game(self):
         self.state = 'choose dealer'

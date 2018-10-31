@@ -38,12 +38,46 @@ socket.on('showTable', function(players){
             $('#table').show()
             for (i = 0; i < players.length; i++) {
                 name = i % 2 == 0 ? '#left' : '#right'
-                $(name).append('<div class="player-container">\
+                $(name).append('<div class="player-container" id="player'+i+'">\
                                     <p>'+players[i].user_name+'</p>\
                                     <p>Current money: '+players[i].money+'</p>\
-                                    <p> Current bet: '+ players[i].bet+'</p>\
+                                    <p>Current bet: '+ players[i].bet+'</p>\
                                 </div>')
             }
+        }
+    }
+})
+
+socket.on('updateTable', function(data){
+    updatedPlayer = data[0]
+    index = data[1]
+    $('#player'+index+' > p:nth-child(2)').html('Current money: ' + updatedPlayer.money)
+    $('#player'+index+' > p:nth-child(3)').html('Current bet: ' + updatedPlayer.bet)
+})
+
+socket.on('showBet', function(data){
+    players = data[0]
+    dealer = data[1]
+    console.log(player,players,dealer)
+    for (i = 0; i < players.length; i++){
+        if (player.user_name == players[i].user_name && players[i].bet == 0 && player.user_name != dealer.user_name){
+            console.log('i can bet')
+            $('#bet').show()
+            break
+        } else {
+            $('#bet').hide()
+        }
+    }
+})
+
+$('#bet').on('submit', function(e){
+    e.preventDefault()
+    $('#bet').hide()
+    let bet = $('input.bet').val()
+    player.bet = bet
+    for (i = 0; i < players.length; i++){
+        if (player.user_name == players[i].user_name){
+            socket.emit('updateBet', player.bet, i)
         }
     }
 })
