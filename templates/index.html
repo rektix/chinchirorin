@@ -29,7 +29,16 @@
 
         </div>
         <div id='player'>
-
+            <div id='dealer' style='display: none'>
+                <button id='yes' onclick='takeDealer()'>Yes</button>
+                <button id='no' onclick='passDealer()'>No</button>
+            </div>
+            <button id='roll' style='display: none' onclick='roll()'>Roll!</button>
+            <div id='dice' style='display: none'>
+                <p id='first'></p>
+                <p id='second'></p>
+                <p id='third'></p>
+            </div>
         </div>
     </div>
 

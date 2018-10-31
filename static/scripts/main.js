@@ -4,14 +4,10 @@ socket.on('connect', function() {
     var login = $('#join').on('submit', function(e) {
         e.preventDefault()
         let user_name = $('input.nickname').val()
-        socket.emit('join', {
-            user_name : user_name,
-            money : 2000
-        })
         player = {
-            user_name : user_name,
-            money : 2000
+            user_name : user_name
         }
+        socket.emit('join', player)
         login.hide()
         $('#lobby').show()
     })
@@ -29,7 +25,7 @@ $('#start').click(function() {
 socket.on('showPlayers', function(player) {
     console.log(player)
     if(typeof player.user_name !== 'undefined') {        
-        $('#players').append('<li><b style="color:#000">'+player.user_name+'</b> '+player.money+'</li>')
+        $('#players').append('<li><b style="color:#000">'+player.user_name+'</b></li>')
     }
 })
 
@@ -42,11 +38,43 @@ socket.on('showTable', function(players){
             $('#table').show()
             for (i = 0; i < players.length; i++) {
                 name = i % 2 == 0 ? '#left' : '#right'
-                $(name).append('<div class="player-container"><p>'+players[i].user_name+'</p><p>Current money: '+players[i].money+'</p></div>')
+                $(name).append('<div class="player-container">\
+                                    <p>'+players[i].user_name+'</p>\
+                                    <p>Current money: '+players[i].money+'</p>\
+                                    <p> Current bet: '+ players[i].bet+'</p>\
+                                </div>')
             }
         }
     }
 })
+
+socket.on('chooseDealer', function(currentPlayer){
+    if (player.user_name == currentPlayer.user_name)
+        $('#dealer').show()
+     else
+        $('#dealer').hide()
+})
+
+function takeDealer() {
+    socket.emit('dealerChosen', player)
+    $('#dealer').hide()
+}
+
+function passDealer() {
+    socket.emit('nextPlayer')
+    $('#dealer').hide()
+}
+
+socket.on('pressRoll', function(){
+    $('#roll').show()
+})
+
+function roll() {
+    $('#dice').show()
+    $('#first').html(Math.floor((Math.random() * 6) + 1))
+    $('#second').html(Math.floor((Math.random() * 6) + 1))
+    $('#third').html(Math.floor((Math.random() * 6) + 1))
+}
 
 socket.on('clearList', function(){
     $('#players').empty()
